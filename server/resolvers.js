@@ -56,18 +56,32 @@ export const resolvers = {
     // updateJob: (_root, { input: { id, title, description } }) => {
     //   return updateJob({ id, title, description });
     // },
-    updateJob: async (_root, { input: { id, title, description } }, { user }) => {
+    updateJob: async (
+      _root,
+      { input: { id, title, description } },
+      { user }
+    ) => {
       if (!user) {
         throw unauthorizedError('Missing authentication');
       }
-      const job = await updateJob({ id, companyId: user.companyId, title, description });
+      const job = await updateJob({
+        id,
+        companyId: user.companyId,
+        title,
+        description,
+      });
       if (!job) {
         throw notFoundError('No Job found with id ' + id);
       }
       return job;
+    },
   },
   Job: {
-    company: (job) => getCompany(job.companyId),
+    // company: (job) => getCompany(job.companyId),
+    // company: (job) => companyLoader.load(job.companyId),
+    company: (job, _args, { companyLoader }) => {
+      return companyLoader.load(job.companyId);
+    },
     date: (job) => toIsoDate(job.createdAt),
   },
   Company: {

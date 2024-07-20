@@ -9,3 +9,5 @@ export async function getUser(id) {
 export async function getUserByEmail(email) {
   return await getUserTable().first().where({ email });
 }
+
+;
